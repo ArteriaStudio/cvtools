@@ -13,7 +13,7 @@ using Windows.Foundation;
 
 namespace cvclass
 {
-	public class CVBase
+	public abstract class CVBase
 	{
 		protected static LearningModel			m_pModel = null;
 		protected static LearningModelSession	m_pSession = null;
@@ -100,5 +100,41 @@ namespace cvclass
 			waitHandle.WaitOne();
 			return operation.GetResults();
 		}
+
+		//　画像分類と領域区分を実行
+		//（引数）
+		//　pModelFilepath：モデルファイルのパス
+		//　pImageFilepath：画像ファイルパス
+		//（備考）
+		//　引数の通り、入力画像はストレージ上のファイルであることを前提とする。
+		public bool Run(string pModelFilepath, string pImageFilepath)
+		{
+			if (LoadModel(pModelFilepath) == false)
+			{
+				return (false);
+			}
+			ColorManagementMode pColorManagementMode = GetColorManagementMode();
+			ImageFeatureValue imageTensor = LoadImageFile(pColorManagementMode, pImageFilepath);
+
+			if (CreateSession() == false)
+			{
+				return (false);
+			}
+
+			LearningModelBinding binding = new LearningModelBinding(m_pSession);
+			binding.Bind(m_pModel.InputFeatures.ElementAt(0).Name, imageTensor);
+
+			var ticks = Environment.TickCount;
+			var pResults = m_pSession.Evaluate(binding, "RunId");
+			ticks = Environment.TickCount - ticks;
+			Console.WriteLine($"model run took {ticks} ticks");
+
+			//　結果をフェッチ
+			DumpResults(pResults);
+
+			return (true);
+		}
+
+		protected abstract void DumpResults(LearningModelEvaluationResult pResults);
 	}
 }

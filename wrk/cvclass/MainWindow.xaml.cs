@@ -16,6 +16,8 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
+//Å@https://huggingface.co/onnx
+
 namespace cvclass
 {
 	/// <summary>
@@ -30,9 +32,13 @@ namespace cvclass
 
 		private void Run_Click(object sender, RoutedEventArgs e)
 		{
-			var pFilepath = "D:\\Home\\Rink\\projects\\assets\\networks\\fcn-resnet50-12-int8.onnx";
+			//var pModelFilepath = "D:\\Home\\Rink\\projects\\assets\\networks\\fcn-resnet50-12-int8.onnx";
+			//var pModelFilepath = "D:\\Home\\Datas\\Network\\SSD-MobilenetV1\\ssd_mobilenet_v1_13-qdq.onnx";	//Å@uint8
+			//var pModelFilepath = "D:\\Home\\Datas\\Network\\SSD-MobilenetV1\\ssd_mobilenet_v1_12.onnx"; //Å@uint8
+			var pModelFilepath = "D:\\Home\\Datas\\Network\\SSD\\ssd-12.onnx";
 			var pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\01.jpg";
-			if (FCN.Run(pFilepath, pImageFilepath) == false)
+			var pModel = new SSDMobileNet();
+			if (pModel.Run(pModelFilepath, pImageFilepath) == false)
 			{
 				;
 			}

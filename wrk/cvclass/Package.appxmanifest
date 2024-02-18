@@ -8,11 +8,11 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="1f62ee0b-7bab-4134-80be-c8a61f49cf68"
+    Name="782901a6-6b1c-42b3-b43d-6d9bdb4da6ef"
     Publisher="CN=Rink"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="1f62ee0b-7bab-4134-80be-c8a61f49cf68" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="782901a6-6b1c-42b3-b43d-6d9bdb4da6ef" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>cvclass</DisplayName>

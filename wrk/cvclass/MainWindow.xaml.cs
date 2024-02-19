@@ -17,6 +17,8 @@ using Windows.Foundation.Collections;
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 //　https://huggingface.co/onnx
+//　NETSDK1083 fixit
+//　https://zenn.dev/shinta0806/articles/dotnet8-netsdk1083
 
 namespace cvclass
 {
@@ -35,7 +37,8 @@ namespace cvclass
 			//var pModelFilepath = "D:\\Home\\Rink\\projects\\assets\\networks\\fcn-resnet50-12-int8.onnx";
 			//var pModelFilepath = "D:\\Home\\Datas\\Network\\SSD-MobilenetV1\\ssd_mobilenet_v1_13-qdq.onnx";	//　uint8
 			//var pModelFilepath = "D:\\Home\\Datas\\Network\\SSD-MobilenetV1\\ssd_mobilenet_v1_12.onnx"; //　uint8
-			var pModelFilepath = "D:\\Home\\Datas\\Network\\SSD\\ssd-12.onnx";
+			//var pModelFilepath = "D:\\Home\\Datas\\Network\\SSD\\ssd-12.onnx";
+			var pModelFilepath = "D:\\Home\\rink\\projects\\assets\\networks\\ssd-12.onnx";
 			var pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\01.jpg";
 			var pModel = new SSDMobileNet();
 			if (pModel.Run(pModelFilepath, pImageFilepath) == false)

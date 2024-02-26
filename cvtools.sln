@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cvclass", "wrk\cvclass\cvclass.csproj", "{CE3A45BD-4428-46F7-82B0-A8DCBC485BDC}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "convert", "wrk\convert\convert.pyproj", "{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cvclass", "wrk\cvclass\cvclass.csproj", "{CE3A45BD-4428-46F7-82B0-A8DCBC485BDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +41,6 @@ Global
 		{CE3A45BD-4428-46F7-82B0-A8DCBC485BDC}.Release|x86.ActiveCfg = Release|x86
 		{CE3A45BD-4428-46F7-82B0-A8DCBC485BDC}.Release|x86.Build.0 = Release|x86
 		{CE3A45BD-4428-46F7-82B0-A8DCBC485BDC}.Release|x86.Deploy.0 = Release|x86
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Release|x64.ActiveCfg = Release|Any CPU
-		{73E04AFA-66AD-4F9A-91FD-2B3D628CC731}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

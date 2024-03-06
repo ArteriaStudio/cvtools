@@ -4,7 +4,11 @@
 #include	"framework.h"
 #include	"cv.h"
 
-#pragma comment(lib, "opencv_world490d.lib")
+#ifndef 	_DEBUG
+#pragma 	comment(lib, "opencv_world490.lib")
+#else
+#pragma 	comment(lib, "opencv_world490d.lib")
+#endif	//	_DEBUG
 
 // グローバル変数:
 HINSTANCE	hInst;
@@ -68,7 +72,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 	cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_VERBOSE);
 
 
-	Main0004();
+//	Main0004();
 
 
 	return(0);

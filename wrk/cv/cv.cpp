@@ -65,6 +65,9 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
+	cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_VERBOSE);
+
+
 	Main0004();
 
 
@@ -93,7 +96,7 @@ std::vector<std::string> getOutputsNames(const cv::dnn::Net& net)
 int
 Main0004()
 {
-	auto pModelFilepath  = "D:\\Home\\rink\\projects\\assets\\networks\\retinanet-9.onnx";
+	auto pModelFilepath  = "D:\\Home\\rink\\projects\\assets\\networks\\RetinaNet\\retinanet-9.onnx";
 	auto pConfigFilepath = "";
 //	auto pModelFilepath  = "D:\\Tmp\\tensor\\MobileNet-SSD v3\\frozen_inference_graph.pb";
 //	auto pConfigFilepath = "D:\\Tmp\\tensor\\MobileNet-SSD v3\\ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt";

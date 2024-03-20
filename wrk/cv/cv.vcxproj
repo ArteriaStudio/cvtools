@@ -78,12 +78,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\inc\libcv\libcv.h" />
+    <ClInclude Include="..\..\inc\libcv\RetinaNet.h" />
     <ClInclude Include="cv.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\libcv\libcv.cpp" />
+    <ClCompile Include="..\..\src\libcv\RetinaNet.cpp" />
     <ClCompile Include="cv.cpp" />
     <ClCompile Include="trackObjects.cpp" />
   </ItemGroup>

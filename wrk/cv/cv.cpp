@@ -3,6 +3,8 @@
 
 #include	"framework.h"
 #include	"cv.h"
+#include	"libcv/libcv.h"
+#include	"libcv/RetinaNet.h"
 
 #ifndef 	_DEBUG
 #pragma 	comment(lib, "opencv_world490.lib")
@@ -69,28 +71,93 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_VERBOSE);
-
-
-//	Main0004();
-
-
-	return(0);
-}
-
-// Get Output Layers Name
-std::vector<std::string> getOutputsNames(const cv::dnn::Net& net)
-{
-	static std::vector<std::string> names;
-	if (names.empty()) {
-		std::vector<int32_t> out_layers = net.getUnconnectedOutLayers();
-		std::vector<std::string> layers_names = net.getLayerNames();
-		names.resize(out_layers.size());
-		for (size_t i = 0; i < out_layers.size(); ++i) {
-			names[i] = layers_names[out_layers[i] - 1];
-		}
+	if (::CvInitialize() == false) {
+		return(EXIT_FAILURE);
 	}
-	return names;
+
+	std::vector<std::string> class_names;
+	if (::LoadStrings(class_names, "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\object_detection_classes_coco.txt") == false) {
+		return(EXIT_FAILURE);
+	}
+
+//	const char *	pModelFilepath  = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2\\saved_model\\saved_model.pb";
+//	const char *	pConfigFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2\\pipeline.config";
+
+	//　Frozed Modelのみを受付、pbtxtが必須
+	const char *	pModelFilepath  = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2_coco_2018_03_29\\frozen_inference_graph.pb";
+	const char *	pConfigFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2_coco_2018_03_29\\ssd_mobilenet_v2_coco_2018_03_29.pbtxt";
+	
+
+	try {
+		auto pNetModel = cv::dnn::readNet(pModelFilepath, pConfigFilepath, "TensorFlow");
+		if (pNetModel.empty() == true) {
+			return(EXIT_FAILURE);
+		}
+		pNetModel.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+		pNetModel.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\_a5807cd9-ee60-4366-b593-6db18aba2ef1.jpg";
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\search.png";
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
+//		auto pImageFilepath = "D:\\Tmp\\POV your waifu sits in front of you.png";
+//		auto pImageFilepath = "D:\\Tmp\\BracingEvoMi.png";
+		auto pImageFilepath = "D:\\Tmp\\00547-00547-00852-3251821908.png";
+
+		auto pImage = cv::imread(pImageFilepath);
+		auto nRows = pImage.rows;
+		auto nCols = pImage.cols;
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(nCols, nRows), cv::Scalar(127.5, 127.5, 127.5), true, false);
+		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(300, 300), cv::Scalar(127.5, 127.5, 127.5), true, false);
+		pNetModel.setInput(pBlob);
+
+		auto pOutStream = getOutputsNames(pNetModel);
+//		auto pOut = pNetModel.forward(pOutStream[0]);
+		auto pOut = pNetModel.forward();
+		auto nChannels = pOut.channels();	//　成分数
+		auto nDimensions = pOut.dims;		//　次元数
+		pOut;
+		auto b = pOut.ptr(0, 0);
+
+		cv::Mat 	pDetectionMat(pOut.size[2], pOut.size[3], CV_32F, pOut.ptr<float>());
+
+		for (int i = 0; i < pDetectionMat.rows; i++) {
+			int class_id = (int)pDetectionMat.at<float>(i, 1);
+			float confidence = pDetectionMat.at<float>(i, 2);
+
+			// Check if the detection is of good quality
+			if (confidence > 0.4) {
+				int box_x = static_cast<int>(pDetectionMat.at<float>(i, 3) * pImage.cols);
+				int box_y = static_cast<int>(pDetectionMat.at<float>(i, 4) * pImage.rows);
+				int box_width = static_cast<int>(pDetectionMat.at<float>(i, 5) * pImage.cols - box_x);
+				int box_height = static_cast<int>(pDetectionMat.at<float>(i, 6) * pImage.rows - box_y);
+				rectangle(pImage, cv::Point(box_x, box_y), cv::Point(box_x + box_width, box_y + box_height), cv::Scalar(255, 255, 255), 2);
+				putText(pImage, class_names[class_id - 1].c_str(), cv::Point(box_x, box_y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(200, 0, 0), 2);
+			}
+		}
+		cv::imshow("image", pImage);
+		cv::waitKey();
+	}
+	catch (...) {
+		int a = 0;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	::CvFinalize();
+
+	return(EXIT_SUCCESS);
 }
 
 //　https://www.koi.mashykom.com/opencv.html#fd04

@@ -99,10 +99,12 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\EuweACdWYAEukxb.jpeg";
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\human1.webp";
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\search.png";
-	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
 //	auto pImageFilepath = "D:\\Tmp\\POV your waifu sits in front of you.png";
 //	auto pImageFilepath = "D:\\Tmp\\BracingEvoMi.png";
 //	auto pImageFilepath = "D:\\Tmp\\00547-00547-00852-3251821908.png";
+	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\jewMI8n.jpg";
+
 	auto pImage = cv::imread(pImageFilepath);
 	auto pBlob = pNet->Prepare(pImage);
 	auto pOut = pNet->Execute(pBlob);

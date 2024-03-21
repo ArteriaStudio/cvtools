@@ -5,6 +5,7 @@
 #include	"cv.h"
 #include	"libcv/libcv.h"
 #include	"libcv/RetinaNet.h"
+#include	"libcv/MobileNet.h"
 
 #ifndef 	_DEBUG
 #pragma 	comment(lib, "opencv_world490.lib")
@@ -75,8 +76,62 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 		return(EXIT_FAILURE);
 	}
 
+	auto pLabelFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\object_detection_classes_coco.txt";
+//	auto pLabelFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\Common\\coco-labels-2014_2017.txt";
+	std::vector<std::string> pClassNames;
+	if (::LoadStrings(pClassNames, pLabelFilepath) == false) {
+		return(EXIT_FAILURE);
+	}
+
+	auto pNet = new CMobileNet();
+	if (pNet->Create() == false) {
+		return(EXIT_FAILURE);
+	}
+
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\_a5807cd9-ee60-4366-b593-6db18aba2ef1.jpg";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\_4ac10f69-818b-4351-8127-38e540070a0b.jpg";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\0huxbDX.jpg";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\00773-2858724274.png";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\EuweACdWYAEukxb.jpeg";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\human1.webp";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\search.png";
+	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
+//	auto pImageFilepath = "D:\\Tmp\\POV your waifu sits in front of you.png";
+//	auto pImageFilepath = "D:\\Tmp\\BracingEvoMi.png";
+//	auto pImageFilepath = "D:\\Tmp\\00547-00547-00852-3251821908.png";
+	auto pImage = cv::imread(pImageFilepath);
+	auto pBlob = pNet->Prepare(pImage);
+	auto pOut = pNet->Execute(pBlob);
+
+	VDnnInfences	pResults;
+	pNet->Post(pImage,pOut, pResults);
+
+	delete pNet;
+
+	for (auto i = pResults.begin(); i != pResults.end(); i++) {
+		rectangle(pImage, cv::Point(i->x, i->y), cv::Point(i->x + i->w, i->y + i->h), cv::Scalar(255, 255, 255), 2);
+		std::string		pText;
+		pText = std::format("{}:{}", pClassNames[i->iClassId - 1].c_str(), i->fConfidence);
+		putText(pImage, pText.c_str(), cv::Point(i->x, i->y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(200, 0, 0), 2);
+	}
+
+	cv::imshow("image", pImage);
+	cv::waitKey();
+
+
+	::CvFinalize();
+
+	return(EXIT_SUCCESS);
+}
+
+int
+Main0005()
+{
+	auto pLabelFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\object_detection_classes_coco.txt";
+//	auto pLabelFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\Common\\coco-labels-2014_2017.txt";
 	std::vector<std::string> class_names;
-	if (::LoadStrings(class_names, "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\object_detection_classes_coco.txt") == false) {
+	if (::LoadStrings(class_names, pLabelFilepath) == false) {
 		return(EXIT_FAILURE);
 	}
 
@@ -84,9 +139,10 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 //	const char *	pConfigFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2\\pipeline.config";
 
 	//　Frozed Modelのみを受付、pbtxtが必須
-	const char *	pModelFilepath  = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2_coco_2018_03_29\\frozen_inference_graph.pb";
-	const char *	pConfigFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2_coco_2018_03_29\\ssd_mobilenet_v2_coco_2018_03_29.pbtxt";
-	
+//	const char *	pModelFilepath  = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2_coco_2018_03_29\\frozen_inference_graph.pb";
+//	const char *	pConfigFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\ssd_mobilenet_v2_coco_2018_03_29\\ssd_mobilenet_v2_coco_2018_03_29.pbtxt";
+	const char* pModelFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\MobileNet-SSDv3\\frozen_inference_graph.pb";
+	const char* pConfigFilepath = "D:\\Home\\Rink\\projects\\assets\\Networks\\TensorFlow\\MobileNet-SSDv3\\ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt";
 
 	try {
 		auto pNetModel = cv::dnn::readNet(pModelFilepath, pConfigFilepath, "TensorFlow");
@@ -96,22 +152,38 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 		pNetModel.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 		pNetModel.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
 
+		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
 //		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\_a5807cd9-ee60-4366-b593-6db18aba2ef1.jpg";
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\_4ac10f69-818b-4351-8127-38e540070a0b.jpg";
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\0huxbDX.jpg";
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\00773-2858724274.png";
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\EuweACdWYAEukxb.jpeg";
+//		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\human1.webp";
 //		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\search.png";
 //		auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
 //		auto pImageFilepath = "D:\\Tmp\\POV your waifu sits in front of you.png";
 //		auto pImageFilepath = "D:\\Tmp\\BracingEvoMi.png";
-		auto pImageFilepath = "D:\\Tmp\\00547-00547-00852-3251821908.png";
-
+//		auto pImageFilepath = "D:\\Tmp\\00547-00547-00852-3251821908.png";
 		auto pImage = cv::imread(pImageFilepath);
+
 		auto nRows = pImage.rows;
 		auto nCols = pImage.cols;
-//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(nCols, nRows), cv::Scalar(127.5, 127.5, 127.5), true, false);
-		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(300, 300), cv::Scalar(127.5, 127.5, 127.5), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(nRows, nCols), cv::Scalar(127.5, 127.5, 127.5), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(nCols, nRows), cv::Scalar(), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(300, 300), cv::Scalar(), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(512, 512), cv::Scalar(127.5, 127.5, 127.5), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(300, 300), cv::Scalar(127.5, 127.5, 127.5), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(300, 300), cv::Scalar(127.5, 127.5, 127.5), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, cv::Size(512, 512), cv::Scalar(), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(300, 300), cv::Scalar(127.5, 127.5, 127.5), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(512, 512), cv::Scalar(127.5, 127.5, 127.5), true, false);
+//		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(nCols, nRows), cv::Scalar(127.5, 127.5, 127.5), true, false);
+		auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(320, 320), cv::Scalar(127.5, 127.5, 127.5), true, false);
+
 		pNetModel.setInput(pBlob);
 
 		auto pOutStream = getOutputsNames(pNetModel);
-//		auto pOut = pNetModel.forward(pOutStream[0]);
+		//		auto pOut = pNetModel.forward(pOutStream[0]);
 		auto pOut = pNetModel.forward();
 		auto nChannels = pOut.channels();	//　成分数
 		auto nDimensions = pOut.dims;		//　次元数
@@ -125,13 +197,15 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 			float confidence = pDetectionMat.at<float>(i, 2);
 
 			// Check if the detection is of good quality
-			if (confidence > 0.4) {
+			if (confidence > 0.45) {
 				int box_x = static_cast<int>(pDetectionMat.at<float>(i, 3) * pImage.cols);
 				int box_y = static_cast<int>(pDetectionMat.at<float>(i, 4) * pImage.rows);
 				int box_width = static_cast<int>(pDetectionMat.at<float>(i, 5) * pImage.cols - box_x);
 				int box_height = static_cast<int>(pDetectionMat.at<float>(i, 6) * pImage.rows - box_y);
 				rectangle(pImage, cv::Point(box_x, box_y), cv::Point(box_x + box_width, box_y + box_height), cv::Scalar(255, 255, 255), 2);
-				putText(pImage, class_names[class_id - 1].c_str(), cv::Point(box_x, box_y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(200, 0, 0), 2);
+				std::string		pText;
+				pText = std::format("{}:{}", class_names[class_id - 1].c_str(), confidence);
+				putText(pImage, pText.c_str(), cv::Point(box_x, box_y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(200, 0, 0), 2);
 			}
 		}
 		cv::imshow("image", pImage);
@@ -141,23 +215,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 		int a = 0;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	::CvFinalize();
-
-	return(EXIT_SUCCESS);
+	return(0);
 }
 
 //　https://www.koi.mashykom.com/opencv.html#fd04

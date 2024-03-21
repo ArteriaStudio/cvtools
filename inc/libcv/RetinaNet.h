@@ -1,7 +1,7 @@
 #pragma 	once
-//　libcv.h
+//　RetinaNet.h
 #ifndef 	__RETINANET_H__
-#include	"libcv/libcv.h"
+#include	"libcv/DnnBase.h"
 
 //　
 class	CRetinaNet : public CDnnBase

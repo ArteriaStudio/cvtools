@@ -45,6 +45,12 @@
     <ClInclude Include="..\..\inc\libcv\DnnBase.h">
       <Filter>ヘッダー ファイル\libcv</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\libcv\MobileNetV3.h">
+      <Filter>ヘッダー ファイル\libcv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\libcv\MobileNetV2.h">
+      <Filter>ヘッダー ファイル\libcv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cv.cpp">
@@ -63,6 +69,12 @@
       <Filter>ソース ファイル\libcv</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\libcv\DnnBase.cpp">
+      <Filter>ソース ファイル\libcv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libcv\MobileNetV3.cpp">
+      <Filter>ソース ファイル\libcv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libcv\MobileNetV2.cpp">
       <Filter>ソース ファイル\libcv</Filter>
     </ClCompile>
   </ItemGroup>

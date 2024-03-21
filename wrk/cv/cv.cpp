@@ -6,6 +6,9 @@
 #include	"libcv/libcv.h"
 #include	"libcv/RetinaNet.h"
 #include	"libcv/MobileNet.h"
+#include	"libcv/MobileNetV2.h"
+#include	"libcv/MobileNetV3.h"
+
 
 #ifndef 	_DEBUG
 #pragma 	comment(lib, "opencv_world490.lib")
@@ -83,7 +86,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 		return(EXIT_FAILURE);
 	}
 
-	auto pNet = new CMobileNet();
+	auto pNet = new CMobileNetV2();
 	if (pNet->Create() == false) {
 		return(EXIT_FAILURE);
 	}

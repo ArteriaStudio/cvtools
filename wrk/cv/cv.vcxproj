@@ -81,6 +81,8 @@
     <ClInclude Include="..\..\inc\libcv\DnnBase.h" />
     <ClInclude Include="..\..\inc\libcv\libcv.h" />
     <ClInclude Include="..\..\inc\libcv\MobileNet.h" />
+    <ClInclude Include="..\..\inc\libcv\MobileNetV2.h" />
+    <ClInclude Include="..\..\inc\libcv\MobileNetV3.h" />
     <ClInclude Include="..\..\inc\libcv\RetinaNet.h" />
     <ClInclude Include="cv.h" />
     <ClInclude Include="framework.h" />
@@ -91,6 +93,8 @@
     <ClCompile Include="..\..\src\libcv\DnnBase.cpp" />
     <ClCompile Include="..\..\src\libcv\libcv.cpp" />
     <ClCompile Include="..\..\src\libcv\MobileNet.cpp" />
+    <ClCompile Include="..\..\src\libcv\MobileNetV2.cpp" />
+    <ClCompile Include="..\..\src\libcv\MobileNetV3.cpp" />
     <ClCompile Include="..\..\src\libcv\RetinaNet.cpp" />
     <ClCompile Include="cv.cpp" />
     <ClCompile Include="trackObjects.cpp" />

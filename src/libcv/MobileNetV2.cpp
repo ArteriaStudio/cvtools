@@ -1,4 +1,5 @@
-//　RetinaNet.cpp
+//　MobileNetV2.cpp
+//　物体検出モデル（SSD-MobileNetV2）
 #include	"framework.h"
 #include	"libcv/libcv.h"
 #include	"libcv/MobileNetV2.h"
@@ -43,5 +44,5 @@ CMobileNetV2::Prepare(cv::Mat &  pImage)
 cv::Mat
 CMobileNetV2::Execute(cv::Mat & pBlob)
 {
-	return(CDnnBase::Execute(pBlob));
+	return(CDnnNetBase::Execute(pBlob));
 }

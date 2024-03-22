@@ -4,7 +4,7 @@
 #include	"libcv/DnnBase.h"
 
 //Å@
-class	CMobileNet : public CDnnBase
+class	CMobileNet : public CDnnNetBase
 {
 protected:
 public:

@@ -1,4 +1,5 @@
-//　RetinaNet.cpp
+//　MobileNetV3.cpp
+//　物体検出モデル（SSD-MobileNetV3）
 #include	"framework.h"
 #include	"libcv/libcv.h"
 #include	"libcv/MobileNetV3.h"
@@ -31,7 +32,7 @@ cv::Mat
 CMobileNetV3::Prepare(cv::Mat &  pImage)
 {
 	/*
-	if (CDnnBase::Prepare(pImage, pBlob) == false) {
+	if (CDnnNetBase::Prepare(pImage, pBlob) == false) {
 		return(false);
 	}
 	*/
@@ -44,5 +45,5 @@ CMobileNetV3::Prepare(cv::Mat &  pImage)
 cv::Mat
 CMobileNetV3::Execute(cv::Mat & pBlob)
 {
-	return(CDnnBase::Execute(pBlob));
+	return(CDnnNetBase::Execute(pBlob));
 }

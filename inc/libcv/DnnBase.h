@@ -26,21 +26,42 @@ protected:
 	std::string 	m_pFrameWorkName;		//　フレームワーク名
 	cv::Size		m_fInputShape;			//　入力矩形の寸法
 
-	cv::dnn::Net	m_pNetModel;	//　ネットワークモデル
-//	cv::Mat 		m_pBlob;		//　入力テンソル
-
 public:
 			 CDnnBase();
 	virtual ~CDnnBase()=0;
+};
+
+//　DNN 汎用モデル基底
+class	CDnnNetBase : public CDnnBase
+{
+protected:
+	cv::dnn::Net	m_pNetModel;	//　ネットワークモデル
+
+public:
+	 CDnnNetBase();
+	~CDnnNetBase();
 
 	virtual bool		Create();
-	virtual cv::Mat 	Prepare(cv::Mat& pImage);
-	virtual cv::Mat 	Execute(cv::Mat& pBlob);
+	virtual cv::Mat 	Prepare(cv::Mat &  pImage);
+	virtual cv::Mat 	Execute(cv::Mat &  pBlob);
 	virtual bool		Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults);
 };
 
+//　DNN 物体検出モデル基底
+class	CDnnDetectBase : public CDnnBase
+{
+protected:
+//	cv::dnn::DetectionModel 	m_pNetModel;	//　ネットワークモデル
+	cv::dnn::Net	m_pNetModel;	//　ネットワークモデル
+
+public:
+	 CDnnDetectBase();
+	~CDnnDetectBase();
+
+	bool	Create();
+
+};
 
 //　関数プロトタイプ
-
 
 #endif	//	__DNNBASE_H__

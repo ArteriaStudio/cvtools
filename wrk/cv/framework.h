@@ -22,6 +22,7 @@
 
 // OpenCV ヘッダーファイル
 #include	<opencv2/opencv.hpp>
+#include	<opencv2/dnn/dnn.hpp>
 #include	<opencv2/video/tracking.hpp>
 #include	<opencv2/core/utils/logger.hpp>
 

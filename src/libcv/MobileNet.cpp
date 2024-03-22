@@ -31,7 +31,7 @@ cv::Mat
 CMobileNet::Prepare(cv::Mat &  pImage)
 {
 	/*
-	if (CDnnBase::Prepare(pImage, pBlob) == false) {
+	if (CDnnNetBase::Prepare(pImage, pBlob) == false) {
 		return(false);
 	}
 	*/
@@ -44,5 +44,5 @@ CMobileNet::Prepare(cv::Mat &  pImage)
 cv::Mat
 CMobileNet::Execute(cv::Mat & pBlob)
 {
-	return(CDnnBase::Execute(pBlob));
+	return(CDnnNetBase::Execute(pBlob));
 }

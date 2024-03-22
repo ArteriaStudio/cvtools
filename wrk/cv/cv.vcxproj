@@ -84,6 +84,7 @@
     <ClInclude Include="..\..\inc\libcv\MobileNetV2.h" />
     <ClInclude Include="..\..\inc\libcv\MobileNetV3.h" />
     <ClInclude Include="..\..\inc\libcv\RetinaNet.h" />
+    <ClInclude Include="..\..\inc\libcv\YOLOv4.h" />
     <ClInclude Include="cv.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -96,6 +97,7 @@
     <ClCompile Include="..\..\src\libcv\MobileNetV2.cpp" />
     <ClCompile Include="..\..\src\libcv\MobileNetV3.cpp" />
     <ClCompile Include="..\..\src\libcv\RetinaNet.cpp" />
+    <ClCompile Include="..\..\src\libcv\YOLOv4.cpp" />
     <ClCompile Include="cv.cpp" />
     <ClCompile Include="trackObjects.cpp" />
   </ItemGroup>

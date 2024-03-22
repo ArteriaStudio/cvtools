@@ -83,3 +83,15 @@ std::vector<std::string>	getOutputsNames(const cv::dnn::Net& net)
 	}
 	return names;
 }
+
+//
+void
+DumpStrings(std::vector<cv::String> &  pLists)
+{
+	for (auto i = pLists.begin(); i != pLists.end(); i++) {
+		std::string		pText = std::format("{}\n", i->c_str());
+		::OutputDebugStringA(pText.c_str());
+	}
+
+	return;
+}

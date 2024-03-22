@@ -8,6 +8,7 @@
 #include	"libcv/MobileNet.h"
 #include	"libcv/MobileNetV2.h"
 #include	"libcv/MobileNetV3.h"
+#include	"libcv/YOLOV4.h"
 
 
 #ifndef 	_DEBUG
@@ -86,7 +87,9 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 		return(EXIT_FAILURE);
 	}
 
-	auto pNet = new CMobileNetV2();
+//	auto pNet = new CYOLOv4();
+//	auto pNet = new CMobileNetV2();
+	auto pNet = new CMobileNetV3();
 	if (pNet->Create() == false) {
 		return(EXIT_FAILURE);
 	}
@@ -96,28 +99,32 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\_4ac10f69-818b-4351-8127-38e540070a0b.jpg";
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\0huxbDX.jpg";
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\00773-2858724274.png";
-//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\EuweACdWYAEukxb.jpeg";
+	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\EuweACdWYAEukxb.jpeg";
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\human1.webp";
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\search.png";
 //	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\img_c8dad835c4b9134b067cc8b8efcab22f143142.jpg";
 //	auto pImageFilepath = "D:\\Tmp\\POV your waifu sits in front of you.png";
 //	auto pImageFilepath = "D:\\Tmp\\BracingEvoMi.png";
 //	auto pImageFilepath = "D:\\Tmp\\00547-00547-00852-3251821908.png";
-	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\jewMI8n.jpg";
+//	auto pImageFilepath = "C:\\Users\\Rink\\OneDrive\\Pictures\\jewMI8n.jpg";
 
 	auto pImage = cv::imread(pImageFilepath);
 	auto pBlob = pNet->Prepare(pImage);
-	auto pOut = pNet->Execute(pBlob);
+	auto pOut  = pNet->Execute(pBlob);
+//	auto pOuts = pNet->ExecuteEx(pBlob);
 
 	VDnnInfences	pResults;
-	pNet->Post(pImage,pOut, pResults);
+
+//	pNet->Post(pImage,pOuts, pResults);
+	pNet->Post(pImage, pOut, pResults);
 
 	delete pNet;
 
 	for (auto i = pResults.begin(); i != pResults.end(); i++) {
 		rectangle(pImage, cv::Point(i->x, i->y), cv::Point(i->x + i->w, i->y + i->h), cv::Scalar(255, 255, 255), 2);
 		std::string		pText;
-		pText = std::format("{}:{}", pClassNames[i->iClassId - 1].c_str(), i->fConfidence);
+//		pText = std::format("{}:{}", pClassNames[i->iClassId - 1].c_str(), i->fConfidence);
+		pText = std::format("{}:{}", pClassNames[i->iClassId].c_str(), i->fConfidence);
 		putText(pImage, pText.c_str(), cv::Point(i->x, i->y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(200, 0, 0), 2);
 	}
 
@@ -225,6 +232,7 @@ Main0005()
 
 //　https://www.koi.mashykom.com/opencv.html#fd04
 //　https://learnopencv.com/deep-learning-with-opencvs-dnn-module-a-definitive-guide/
+//　[OpenCVで利用できる各モデルの案内を記したページへのリンク集]
 //　https://github.com/opencv/opencv/wiki/Deep-Learning-in-OpenCV
 
 int

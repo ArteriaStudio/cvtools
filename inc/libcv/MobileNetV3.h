@@ -1,10 +1,11 @@
 #pragma 	once
-//　libcv.h
+//　MobileNetV3.h
+//　物体検出モデル（SSD-MobileNetV3）
 #ifndef 	__MOBILENETV3_H__
 #include	"libcv/DnnBase.h"
 
 //　
-class	CMobileNetV3 : public CDnnBase
+class	CMobileNetV3 : public CDnnNetBase
 {
 protected:
 public:

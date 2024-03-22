@@ -14,9 +14,32 @@ CDnnBase::~CDnnBase()
 {
 }
 
+
+
+CDnnInfence::CDnnInfence()
+{
+	x = y = w = h = 0;
+	iClassId = INT_MAX;
+	fConfidence = 0.0f;
+}
+
+CDnnInfence::~CDnnInfence()
+{
+}
+
+CDnnNetBase::CDnnNetBase()
+{
+	;
+}
+
+CDnnNetBase::~CDnnNetBase()
+{
+	;
+}
+
 //　ネットワークモデルを生成
 bool
-CDnnBase::Create()
+CDnnNetBase::Create()
 {
 	//　
 	m_pNetModel = cv::dnn::readNet(m_pModelFilepath, m_pConfigFilepath, m_pFrameWorkName);
@@ -31,7 +54,7 @@ CDnnBase::Create()
 
 //　
 cv::Mat
-CDnnBase::Prepare(cv::Mat & pImage)
+CDnnNetBase::Prepare(cv::Mat & pImage)
 {
 	auto nRows = pImage.rows;
 	auto nCols = pImage.cols;
@@ -42,13 +65,13 @@ CDnnBase::Prepare(cv::Mat & pImage)
 	return(pBlob);
 }
 
-//　TensorFlow 2 Model
-//　https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
-
 //　配布されたモデルをONNXに変換して使用するのは互換性の問題を孕む（2024/03/20）
 cv::Mat
-CDnnBase::Execute(cv::Mat & pBlob)
+CDnnNetBase::Execute(cv::Mat & pBlob)
 {
+	std::vector<cv::String> 	pOutNames = m_pNetModel.getUnconnectedOutLayersNames();
+	::DumpStrings(pOutNames);
+
 	m_pNetModel.setInput(pBlob);
 	auto pOutStream = getOutputsNames(m_pNetModel);
 //	auto pOut = pNetModel.forward(pOutStream[0]);
@@ -64,11 +87,19 @@ CDnnBase::Execute(cv::Mat & pBlob)
 	return(cv::Mat());
 }
 
-//　
+
+//　TensorFlow 2 Model
+//　https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+
+//　PostProcessの参考実装
+//　https://github.com/opencv/opencv/blob/8c25a8eb7b10fb50cda323ee6bec68aa1a9ce43c/samples/dnn/object_detection.cpp#L192-L221
 bool
-CDnnBase::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
+CDnnNetBase::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 {
-	cv::Mat 	pDetectionMat(pOut.size[2], pOut.size[3], CV_32F, pOut.ptr<float>());
+	//　
+	auto nRows = pOut.size[2];
+	auto nCols = pOut.size[3];
+	cv::Mat 	pDetectionMat(nRows, nCols, CV_32F, pOut.ptr<float>());
 
 	for (int i = 0; i < pDetectionMat.rows; i++) {
 		int class_id = (int)pDetectionMat.at<float>(i, 1);
@@ -86,7 +117,7 @@ CDnnBase::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 			pResult.y = box_y;
 			pResult.w = box_width;
 			pResult.h = box_height;
-			pResult.iClassId = class_id;
+			pResult.iClassId = class_id;	//　SSD-MobileNetは、1オリジンと思われる。（2024/03/22）
 			pResult.fConfidence = fConfidence;
 
 			pResults.push_back(pResult);
@@ -97,14 +128,12 @@ CDnnBase::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 }
 
 
-CDnnInfence::CDnnInfence()
-{
-	x = y = w = h = 0;
-	iClassId = INT_MAX;
-	fConfidence = 0.0f;
-}
 
-CDnnInfence::~CDnnInfence()
+
+CDnnDetectBase::CDnnDetectBase()
 {
 }
 
+CDnnDetectBase::~CDnnDetectBase()
+{
+}

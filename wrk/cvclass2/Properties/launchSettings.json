@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "cvclass (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "cvclass (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

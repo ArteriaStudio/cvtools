@@ -45,11 +45,6 @@ CYOLOv4::Create()
 	m_pNetModel.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 	m_pNetModel.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
 
-	/*
-	auto pModelLayers = m_pNetModel.getLayerNames();
-//	m_pNetModel.getOutputDetails();
-	*/
-
 	return(true);
 }
 
@@ -57,74 +52,28 @@ CYOLOv4::Create()
 cv::Mat
 CYOLOv4::Prepare(cv::Mat& pImage)
 {
-	/*
-	m_fInputShape.width  = pImage.cols;
-	m_fInputShape.height = pImage.rows;
-	*/
 	auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 255.0, m_fInputShape, cv::Scalar(0.0, 0.0, 0.0), true, false);
-
 	return(pBlob);
-}
-
-//　
-std::vector<cv::Mat>
-CYOLOv4::ExecuteEx(cv::Mat &  pBlob)
-{
-	/*
-	auto pNet = cv::dnn::DetectionModel(m_pNetModel);
-	pNet.setInputParams(1.0 / 255.0, m_fInputShape, cv::Scalar(0.0, 0.0, 0.0), true, false);
-	std::vector<int>		pClassIds;
-	std::vector<float>		pConfidences;
-	std::vector<cv::Rect>	pBoxes;
-	pNet.detect(pBlob, pClassIds, pConfidences, pBoxes);
-	*/
-
-	std::vector<cv::String> 	pOutNames = m_pNetModel.getUnconnectedOutLayersNames();
-	DumpStrings(pOutNames);
-
-
-	m_pNetModel.setInput(pBlob);
-	auto pOutStream = getOutputsNames(m_pNetModel);
-	try {
-		std::vector<cv::Mat>	pOuts;
-		//auto pOut = m_pNetModel.forward(pOuts);
-		m_pNetModel.forward(pOuts, pOutNames);
-		//auto nChannels = pOut.channels();	//　成分数
-		//auto nDimensions = pOut.dims;		//　次元数
-		return(pOuts);
-	}
-	catch (...) {
-		;
-	}
-
-	return(cv::Mat());
 }
 
 //　
 cv::Mat
 CYOLOv4::Execute(cv::Mat &  pBlob)
 {
-	/*
-	auto pNet = cv::dnn::DetectionModel(m_pNetModel);
-	pNet.setInputParams(1.0 / 255.0, m_fInputShape, cv::Scalar(0.0, 0.0, 0.0), true, false);
-	std::vector<int>		pClassIds;
-	std::vector<float>		pConfidences;
-	std::vector<cv::Rect>	pBoxes;
-	pNet.detect(pBlob, pClassIds, pConfidences, pBoxes);
-	*/
-
 	std::vector<cv::String> 	pOutNames = m_pNetModel.getUnconnectedOutLayersNames();
+#ifdef		_DEBUG
 	::DumpStrings(pOutNames);
+#endif	//	_DEBUG
 
 	m_pNetModel.setInput(pBlob);
 	auto pOutStream = getOutputsNames(m_pNetModel);
 	try {
 		std::vector<cv::Mat>	pOuts;
-		//auto pOut = m_pNetModel.forward(pOuts);
+//		auto pOut = m_pNetModel.forward(pOuts);
 		m_pNetModel.forward(pOuts, pOutNames);
-		//auto nChannels = pOut.channels();	//　成分数
-		//auto nDimensions = pOut.dims;		//　次元数
-		return(pOuts[0]);
+		auto nChannels = pOuts[0].channels();	//　成分数
+		auto nDimensions = pOuts[0].dims;		//　次元数
+		return(pOuts[2]);
 	} catch (...) {
 		;
 	}
@@ -134,94 +83,36 @@ CYOLOv4::Execute(cv::Mat &  pBlob)
 
 //　
 bool
-CYOLOv4::Post(cv::Mat &  pImage, std::vector<cv::Mat> &  pOuts, VDnnInfences &  pResults)
+CYOLOv4::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 {
-	std::vector<int>	outLayers = m_pNetModel.getUnconnectedOutLayers();
-	std::string 		outLayerType_0 = m_pNetModel.getLayer(outLayers[0])->type;
-	std::string 		outLayerType_1 = m_pNetModel.getLayer(outLayers[1])->type;
-	std::string 		outLayerType_2 = m_pNetModel.getLayer(outLayers[2])->type;
+	// Network produces output blob with a shape NxC where N is a number of
+	// detected objects and C is a number of classes + 4 where the first 4
+	// numbers are [center_x, center_y, width, height]
+	float * 	data = (float*)pOut.data;
+	for (int j = 0; j < pOut.rows; ++j, data += pOut.cols) {
+		cv::Mat 	scores = pOut.row(j).colRange(5, pOut.cols);
+		cv::Point	classIdPoint;
+		double		confidence;
+		minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+		if (confidence > 0.93) {
+			int centerX = (int)(data[0] * pImage.cols);
+			int centerY = (int)(data[1] * pImage.rows);
+			int width   = (int)(data[2] * pImage.cols);
+			int height  = (int)(data[3] * pImage.rows);
+			int left    = centerX - width / 2;
+			int top     = centerY - height / 2;
 
-	//　"Region"
-	for (size_t i = 0; i < pOuts.size(); ++i) {
-		// Network produces output blob with a shape NxC where N is a number of
-		// detected objects and C is a number of classes + 4 where the first 4
-		// numbers are [center_x, center_y, width, height]
-		float* data = (float*)pOuts[i].data;
-		for (int j = 0; j < pOuts[i].rows; ++j, data += pOuts[i].cols) {
-			cv::Mat scores = pOuts[i].row(j).colRange(5, pOuts[i].cols);
-			cv::Point classIdPoint;
-			double confidence;
-			minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-			if (confidence > 0.93) {
-				int centerX = (int)(data[0] * pImage.cols);
-				int centerY = (int)(data[1] * pImage.rows);
-				int width   = (int)(data[2] * pImage.cols);
-				int height  = (int)(data[3] * pImage.rows);
-				int left    = centerX - width / 2;
-				int top     = centerY - height / 2;
-
-				CDnnInfence		pResult;
-				pResult.x = left;
-				pResult.y = top;
-				pResult.w = width;
-				pResult.h = height;
-				pResult.iClassId = classIdPoint.x;
-				pResult.fConfidence = (float)confidence;
-
-				pResults.push_back(pResult);
-			}
-		}
-	}
-
-
-
-
-
-/*
-	//　画像の寸法を獲得
-	auto nImageW = pImage.cols;
-	auto nImageH = pImage.rows;
-*/
-/*
-	auto x = pOut.at<float>(0, 1);
-	auto y = pOut.at<float>(0, 2);
-	auto w = pOut.at<float>(0, 3);
-	auto h = pOut.at<float>(0, 4);
-	auto c = pOut.at<float>(0, 5);
-*/
-
-
-/*
-	//　
-//	auto nRows = pOut.rows;
-//	auto nCols = pOut.cols;
-	auto nRows = pOut.rows;
-	auto nCols = pOut.cols;
-	cv::Mat 	pDetectionMat(nRows, nCols, CV_32F, pOut.ptr<float>());
-
-	for (int i = 0; i < pDetectionMat.rows; i++) {
-		int class_id = (int)pDetectionMat.at<float>(i, 1);
-		float fConfidence = pDetectionMat.at<float>(i, 2);
-
-		// Check if the detection is of good quality
-		if (fConfidence > 0.45) {
-			int box_x = static_cast<int>(pDetectionMat.at<float>(i, 3) * pImage.cols);
-			int box_y = static_cast<int>(pDetectionMat.at<float>(i, 4) * pImage.rows);
-			int box_width = static_cast<int>(pDetectionMat.at<float>(i, 5) * pImage.cols - box_x);
-			int box_height = static_cast<int>(pDetectionMat.at<float>(i, 6) * pImage.rows - box_y);
-			
 			CDnnInfence		pResult;
-			pResult.x = box_x;
-			pResult.y = box_y;
-			pResult.w = box_width;
-			pResult.h = box_height;
-			pResult.iClassId = class_id;
-			pResult.fConfidence = fConfidence;
+			pResult.x = left;
+			pResult.y = top;
+			pResult.w = width;
+			pResult.h = height;
+			pResult.iClassId = classIdPoint.x;
+			pResult.fConfidence = (float)confidence;
 
 			pResults.push_back(pResult);
 		}
 	}
-*/
 
 	return(true);
 }

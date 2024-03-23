@@ -39,27 +39,13 @@ protected:
 
 public:
 	 CDnnNetBase();
-	~CDnnNetBase();
+	~CDnnNetBase()=0;
 
 	virtual bool		Create();
-	virtual cv::Mat 	Prepare(cv::Mat &  pImage);
+	virtual cv::Mat 	Prepare(cv::Mat &  pImage)=0;
 	virtual cv::Mat 	Execute(cv::Mat &  pBlob);
-	virtual bool		Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults);
-};
-
-//　DNN 物体検出モデル基底
-class	CDnnDetectBase : public CDnnBase
-{
-protected:
-//	cv::dnn::DetectionModel 	m_pNetModel;	//　ネットワークモデル
-	cv::dnn::Net	m_pNetModel;	//　ネットワークモデル
-
-public:
-	 CDnnDetectBase();
-	~CDnnDetectBase();
-
-	bool	Create();
-
+	virtual bool		Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)=0;
+	virtual bool		Post(cv::Mat &  pImage, std::vector<cv::Mat> &  pOuts, VDnnInfences &  pResults);	//　アーカイブ扱いで残留（2024/03/23）
 };
 
 //　関数プロトタイプ

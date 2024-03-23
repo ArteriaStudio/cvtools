@@ -41,7 +41,6 @@ CDnnNetBase::~CDnnNetBase()
 bool
 CDnnNetBase::Create()
 {
-	//　
 	m_pNetModel = cv::dnn::readNet(m_pModelFilepath, m_pConfigFilepath, m_pFrameWorkName);
 	if (m_pNetModel.empty() == true) {
 		return(EXIT_FAILURE);
@@ -52,25 +51,14 @@ CDnnNetBase::Create()
 	return(true);
 }
 
-//　
-cv::Mat
-CDnnNetBase::Prepare(cv::Mat & pImage)
-{
-	auto nRows = pImage.rows;
-	auto nCols = pImage.cols;
-
-	auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(320, 320), cv::Scalar(127.5, 127.5, 127.5), true, false);
-//	m_pNetModel.setInput(m_pBlob);
-
-	return(pBlob);
-}
-
 //　配布されたモデルをONNXに変換して使用するのは互換性の問題を孕む（2024/03/20）
 cv::Mat
 CDnnNetBase::Execute(cv::Mat & pBlob)
 {
 	std::vector<cv::String> 	pOutNames = m_pNetModel.getUnconnectedOutLayersNames();
+#ifdef		_DEBUG
 	::DumpStrings(pOutNames);
+#endif	//	_DEBUG
 
 	m_pNetModel.setInput(pBlob);
 	auto pOutStream = getOutputsNames(m_pNetModel);
@@ -91,49 +79,45 @@ CDnnNetBase::Execute(cv::Mat & pBlob)
 //　TensorFlow 2 Model
 //　https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
 
-//　PostProcessの参考実装
-//　https://github.com/opencv/opencv/blob/8c25a8eb7b10fb50cda323ee6bec68aa1a9ce43c/samples/dnn/object_detection.cpp#L192-L221
 bool
-CDnnNetBase::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
+CDnnNetBase::Post(cv::Mat &  pImage, std::vector<cv::Mat> &  pOuts, VDnnInfences &  pResults)
 {
-	//　
-	auto nRows = pOut.size[2];
-	auto nCols = pOut.size[3];
-	cv::Mat 	pDetectionMat(nRows, nCols, CV_32F, pOut.ptr<float>());
+	std::vector<int>	outLayers = m_pNetModel.getUnconnectedOutLayers();
+	std::string 		outLayerType_0 = m_pNetModel.getLayer(outLayers[0])->type;
+	std::string 		outLayerType_1 = m_pNetModel.getLayer(outLayers[1])->type;
+	std::string 		outLayerType_2 = m_pNetModel.getLayer(outLayers[2])->type;
 
-	for (int i = 0; i < pDetectionMat.rows; i++) {
-		int class_id = (int)pDetectionMat.at<float>(i, 1);
-		float fConfidence = pDetectionMat.at<float>(i, 2);
+	//　"Region"
+	for (size_t i = 0; i < pOuts.size(); ++i) {
+		// Network produces output blob with a shape NxC where N is a number of
+		// detected objects and C is a number of classes + 4 where the first 4
+		// numbers are [center_x, center_y, width, height]
+		float* data = (float*)pOuts[i].data;
+		for (int j = 0; j < pOuts[i].rows; ++j, data += pOuts[i].cols) {
+			cv::Mat scores = pOuts[i].row(j).colRange(5, pOuts[i].cols);
+			cv::Point classIdPoint;
+			double confidence;
+			minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+			if (confidence > 0.93) {
+				int centerX = (int)(data[0] * pImage.cols);
+				int centerY = (int)(data[1] * pImage.rows);
+				int width = (int)(data[2] * pImage.cols);
+				int height = (int)(data[3] * pImage.rows);
+				int left = centerX - width / 2;
+				int top = centerY - height / 2;
 
-		// Check if the detection is of good quality
-		if (fConfidence > 0.45) {
-			int box_x = static_cast<int>(pDetectionMat.at<float>(i, 3) * pImage.cols);
-			int box_y = static_cast<int>(pDetectionMat.at<float>(i, 4) * pImage.rows);
-			int box_width = static_cast<int>(pDetectionMat.at<float>(i, 5) * pImage.cols - box_x);
-			int box_height = static_cast<int>(pDetectionMat.at<float>(i, 6) * pImage.rows - box_y);
-			
-			CDnnInfence		pResult;
-			pResult.x = box_x;
-			pResult.y = box_y;
-			pResult.w = box_width;
-			pResult.h = box_height;
-			pResult.iClassId = class_id;	//　SSD-MobileNetは、1オリジンと思われる。（2024/03/22）
-			pResult.fConfidence = fConfidence;
+				CDnnInfence		pResult;
+				pResult.x = left;
+				pResult.y = top;
+				pResult.w = width;
+				pResult.h = height;
+				pResult.iClassId = classIdPoint.x;
+				pResult.fConfidence = (float)confidence;
 
-			pResults.push_back(pResult);
+				pResults.push_back(pResult);
+			}
 		}
 	}
 
 	return(true);
-}
-
-
-
-
-CDnnDetectBase::CDnnDetectBase()
-{
-}
-
-CDnnDetectBase::~CDnnDetectBase()
-{
 }

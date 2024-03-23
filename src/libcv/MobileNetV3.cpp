@@ -31,19 +31,7 @@ CMobileNetV3::~CMobileNetV3()
 cv::Mat
 CMobileNetV3::Prepare(cv::Mat &  pImage)
 {
-	/*
-	if (CDnnNetBase::Prepare(pImage, pBlob) == false) {
-		return(false);
-	}
-	*/
 	auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 127.5, cv::Size(320, 320), cv::Scalar(127.5, 127.5, 127.5), true, false);
 
 	return(pBlob);
-}
-
-//Å@
-cv::Mat
-CMobileNetV3::Execute(cv::Mat & pBlob)
-{
-	return(CDnnNetBase::Execute(pBlob));
 }

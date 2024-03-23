@@ -31,18 +31,7 @@ CMobileNetV2::~CMobileNetV2()
 cv::Mat
 CMobileNetV2::Prepare(cv::Mat &  pImage)
 {
-	/*
-	m_fInputShape.width  = pImage.cols;
-	m_fInputShape.height = pImage.rows;
-	*/
 	auto pBlob = cv::dnn::blobFromImage(pImage, 1.0, m_fInputShape, cv::Scalar(104, 117, 123), true, false);
 
 	return(pBlob);
-}
-
-//Å@
-cv::Mat
-CMobileNetV2::Execute(cv::Mat & pBlob)
-{
-	return(CDnnNetBase::Execute(pBlob));
 }

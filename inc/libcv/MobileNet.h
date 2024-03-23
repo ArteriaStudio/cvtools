@@ -3,16 +3,15 @@
 #ifndef 	__MOBILENET_H__
 #include	"libcv/DnnBase.h"
 
-//　
+//　MobileNet 基底クラス
 class	CMobileNet : public CDnnNetBase
 {
 protected:
 public:
 	 CMobileNet();
-	~CMobileNet();
+	~CMobileNet()=0;
 
-	cv::Mat 	Prepare(cv::Mat & pImage);
-	cv::Mat 	Execute(cv::Mat & pBlob);
+	bool	Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults);
 };
 
 #endif	//	__MOBILENET_H__

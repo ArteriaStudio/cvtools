@@ -87,9 +87,9 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 		return(EXIT_FAILURE);
 	}
 
-//	auto pNet = new CYOLOv4();
+	auto pNet = new CYOLOv4();
 //	auto pNet = new CMobileNetV2();
-	auto pNet = new CMobileNetV3();
+//	auto pNet = new CMobileNetV3();
 	if (pNet->Create() == false) {
 		return(EXIT_FAILURE);
 	}

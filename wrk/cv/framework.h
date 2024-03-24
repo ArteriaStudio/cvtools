@@ -9,12 +9,14 @@
 
 // Windows ヘッダー ファイル
 #include	<windows.h>
+#include	<shlwapi.h>
 
 // C ランタイム ヘッダー ファイル
 #include	<stdlib.h>
 #include	<malloc.h>
 #include	<memory.h>
 #include	<tchar.h>
+#include	<assert.h>
 
 // C++ ランタイム ヘッダー ファイル
 #include	<string>

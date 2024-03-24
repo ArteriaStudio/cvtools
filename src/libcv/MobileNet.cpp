@@ -5,6 +5,8 @@
 
 
 //　https://github.com/opencv/opencv/wiki/Deep-Learning-in-OpenCV
+//　DL, CNN全般の解説
+//　https://qiita.com/ba--shi/items/09f5f2f119ffbd9bb316
 
 CMobileNet::CMobileNet()
 {
@@ -29,7 +31,7 @@ CMobileNet::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 		float fConfidence = pDetectionMat.at<float>(i, 2);
 
 		// Check if the detection is of good quality
-		if (fConfidence > 0.45) {
+		if (fConfidence > m_dThreshold) {
 			int box_x = static_cast<int>(pDetectionMat.at<float>(i, 3) * pImage.cols);
 			int box_y = static_cast<int>(pDetectionMat.at<float>(i, 4) * pImage.rows);
 			int box_width = static_cast<int>(pDetectionMat.at<float>(i, 5) * pImage.cols - box_x);
@@ -40,7 +42,7 @@ CMobileNet::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 			pResult.y = box_y;
 			pResult.w = box_width;
 			pResult.h = box_height;
-			pResult.iClassId = class_id;	//　SSD-MobileNetは、1オリジンと思われる。（2024/03/22）
+			pResult.iClassId = class_id - 1;	//　SSD-MobileNetは、1オリジンと思われる。（2024/03/22）
 			pResult.fConfidence = fConfidence;
 
 			pResults.push_back(pResult);

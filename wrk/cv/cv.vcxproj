@@ -78,6 +78,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\inc\libcv\DenseNet.h" />
     <ClInclude Include="..\..\inc\libcv\DnnBase.h" />
     <ClInclude Include="..\..\inc\libcv\libcv.h" />
     <ClInclude Include="..\..\inc\libcv\MobileNet.h" />
@@ -91,6 +92,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\libcv\DenseNet.cpp" />
     <ClCompile Include="..\..\src\libcv\DnnBase.cpp" />
     <ClCompile Include="..\..\src\libcv\libcv.cpp" />
     <ClCompile Include="..\..\src\libcv\MobileNet.cpp" />

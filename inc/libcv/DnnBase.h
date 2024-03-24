@@ -23,25 +23,19 @@ class	CDnnBase
 protected:
 	std::string 	m_pModelFilepath;		//　ネットワークモデルファイル
 	std::string 	m_pConfigFilepath;		//　ネットワーク構成情報ファイル
+	std::string 	m_pLabelFilepath;		//　ラベル情報ファイル
 	std::string 	m_pFrameWorkName;		//　フレームワーク名
 	cv::Size		m_fInputShape;			//　入力矩形の寸法
+	cv::dnn::Net	m_pNetModel;	//　ネットワークモデル
+
+	//　パラメータ
+	double		m_dThreshold;	//　確度閾値
 
 public:
 			 CDnnBase();
 	virtual ~CDnnBase()=0;
-};
 
-//　DNN 汎用モデル基底
-class	CDnnNetBase : public CDnnBase
-{
-protected:
-	cv::dnn::Net	m_pNetModel;	//　ネットワークモデル
-
-public:
-	 CDnnNetBase();
-	~CDnnNetBase()=0;
-
-	virtual bool		Create();
+	virtual bool		Create(std::vector<std::string> &  pLabels);
 	virtual cv::Mat 	Prepare(cv::Mat &  pImage)=0;
 	virtual cv::Mat 	Execute(cv::Mat &  pBlob);
 	virtual bool		Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)=0;

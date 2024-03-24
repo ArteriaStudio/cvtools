@@ -4,7 +4,7 @@
 #include	"libcv/DnnBase.h"
 
 //　
-class	CRetinaNet : public CDnnNetBase
+class	CRetinaNet : public CDnnBase
 {
 protected:
 public:

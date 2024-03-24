@@ -54,6 +54,9 @@
     <ClInclude Include="..\..\inc\libcv\YOLOv4.h">
       <Filter>ヘッダー ファイル\libcv</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\libcv\DenseNet.h">
+      <Filter>ヘッダー ファイル\libcv</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cv.cpp">
@@ -81,6 +84,9 @@
       <Filter>ソース ファイル\libcv</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\libcv\YOLOv4.cpp">
+      <Filter>ソース ファイル\libcv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\libcv\DenseNet.cpp">
       <Filter>ソース ファイル\libcv</Filter>
     </ClCompile>
   </ItemGroup>

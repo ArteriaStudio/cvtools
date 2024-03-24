@@ -5,17 +5,6 @@
 
 
 
-
-CDnnBase::CDnnBase()
-{
-}
-
-CDnnBase::~CDnnBase()
-{
-}
-
-
-
 CDnnInfence::CDnnInfence()
 {
 	x = y = w = h = 0;
@@ -27,33 +16,42 @@ CDnnInfence::~CDnnInfence()
 {
 }
 
-CDnnNetBase::CDnnNetBase()
+
+
+
+CDnnBase::CDnnBase()
 {
-	;
 }
 
-CDnnNetBase::~CDnnNetBase()
+CDnnBase::~CDnnBase()
 {
-	;
 }
 
 //　ネットワークモデルを生成
 bool
-CDnnNetBase::Create()
+CDnnBase::Create(std::vector<std::string> &  pLabels)
 {
+	assert(::PathFileExistsA(m_pModelFilepath.c_str()) == TRUE);
+	assert(::PathFileExistsA(m_pConfigFilepath.c_str()) == TRUE);
+	assert(::PathFileExistsA(m_pLabelFilepath.c_str()) == TRUE);
+
 	m_pNetModel = cv::dnn::readNet(m_pModelFilepath, m_pConfigFilepath, m_pFrameWorkName);
 	if (m_pNetModel.empty() == true) {
-		return(EXIT_FAILURE);
+		return(false);
 	}
 	m_pNetModel.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 	m_pNetModel.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+
+	if (::LoadStrings(pLabels, m_pLabelFilepath.c_str()) == false) {
+		return(false);
+	}
 
 	return(true);
 }
 
 //　配布されたモデルをONNXに変換して使用するのは互換性の問題を孕む（2024/03/20）
 cv::Mat
-CDnnNetBase::Execute(cv::Mat & pBlob)
+CDnnBase::Execute(cv::Mat & pBlob)
 {
 	std::vector<cv::String> 	pOutNames = m_pNetModel.getUnconnectedOutLayersNames();
 #ifdef		_DEBUG
@@ -75,12 +73,11 @@ CDnnNetBase::Execute(cv::Mat & pBlob)
 	return(cv::Mat());
 }
 
-
+//　アーカイヴとして留置
 //　TensorFlow 2 Model
 //　https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
-
 bool
-CDnnNetBase::Post(cv::Mat &  pImage, std::vector<cv::Mat> &  pOuts, VDnnInfences &  pResults)
+CDnnBase::Post(cv::Mat &  pImage, std::vector<cv::Mat> &  pOuts, VDnnInfences &  pResults)
 {
 	std::vector<int>	outLayers = m_pNetModel.getUnconnectedOutLayers();
 	std::string 		outLayerType_0 = m_pNetModel.getLayer(outLayers[0])->type;
@@ -98,7 +95,7 @@ CDnnNetBase::Post(cv::Mat &  pImage, std::vector<cv::Mat> &  pOuts, VDnnInfences
 			cv::Point classIdPoint;
 			double confidence;
 			minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-			if (confidence > 0.93) {
+			if (confidence > m_dThreshold) {
 				int centerX = (int)(data[0] * pImage.cols);
 				int centerY = (int)(data[1] * pImage.rows);
 				int width = (int)(data[2] * pImage.cols);

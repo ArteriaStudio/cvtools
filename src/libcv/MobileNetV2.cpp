@@ -16,11 +16,15 @@ CMobileNetV2::CMobileNetV2()
 	m_pModelFilepath  += "Networks\\TensorFlow\\MobileNet-SSDv2\\frozen_inference_graph.pb";
 	m_pConfigFilepath  = ::GetAssetFolder();
 	m_pConfigFilepath += "Networks\\TensorFlow\\MobileNet-SSDv2\\ssd_mobilenet_v2_coco_2018_03_29.pbtxt";
+	m_pLabelFilepath   = ::GetAssetFolder();
+	m_pLabelFilepath  += "Networks\\TensorFlow\\object_detection_classes_coco.txt";
 	m_pFrameWorkName   = "TensorFlow";
 
 	//　TensorFlowの入力矩形は、pbtxtに記述されている。（2024/03/32）
 	m_fInputShape.width  = 300;
 	m_fInputShape.height = 300;
+
+	m_dThreshold = 0.45;
 }
 
 CMobileNetV2::~CMobileNetV2()

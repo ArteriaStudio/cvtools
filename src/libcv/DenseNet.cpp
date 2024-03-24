@@ -1,7 +1,7 @@
 ﻿//　YOLOv4.cpp
 #include	"framework.h"
 #include	"libcv/libcv.h"
-#include	"libcv/YOLOv4.h"
+#include	"libcv/DenseNet.h"
 
 
 //　https://github.com/opencv/opencv/wiki/Deep-Learning-in-OpenCV
@@ -10,7 +10,7 @@
 //　https://github.com/AlexeyAB/darknet/wiki
 
 //　パラメータか使い方に誤りがあるのか、判定結果のスレッシュホールドに斑がある。（2024/03/24）
-CYOLOv4::CYOLOv4()
+CDenseNet::CDenseNet()
 {
 	//　フレームワークは、DarkNet
 	//　https://github.com/AlexeyAB/darknet
@@ -20,35 +20,35 @@ CYOLOv4::CYOLOv4()
 	//　実装サンプル（c++）
 	//　https://github.com/opencv/opencv/blob/8c25a8eb7b10fb50cda323ee6bec68aa1a9ce43c/samples/dnn/object_detection.cpp#L192-L221
 	m_pModelFilepath   = ::GetAssetFolder();
-	m_pModelFilepath  += "Networks\\DarkNet\\YOLOv4\\yolov4.weights";
+	m_pModelFilepath  += "Networks\\Caffe\\DenseNet\\DenseNet_121.caffemodel";
 	m_pConfigFilepath  = ::GetAssetFolder();
-	m_pConfigFilepath += "Networks\\DarkNet\\YOLOv4\\yolov4.cfg";
+	m_pConfigFilepath += "Networks\\Caffe\\DenseNet\\DenseNet_121.prototxt";
 	m_pLabelFilepath   = ::GetAssetFolder();
 	m_pLabelFilepath  += "Networks\\Common\\coco-labels-2014_2017.txt";
-	m_pFrameWorkName   = "Darknet";
+	m_pFrameWorkName   = "Caffe";
 
-	//　Darknetの入力矩形は、cfgに記述されている。（2024/03/22）
-	m_fInputShape.width  = 608;
-	m_fInputShape.height = 608;
+	//　Caffeの入力矩形は、prototxtに記述されている。（2024/03/24）
+	m_fInputShape.width  = 224;
+	m_fInputShape.height = 224;
 
 	m_dThreshold = 0.92;
 }
 
-CYOLOv4::~CYOLOv4()
+CDenseNet::~CDenseNet()
 {
 }
 
 //　
 cv::Mat
-CYOLOv4::Prepare(cv::Mat& pImage)
+CDenseNet::Prepare(cv::Mat& pImage)
 {
-	auto pBlob = cv::dnn::blobFromImage(pImage, 1.0 / 255.0, m_fInputShape, cv::Scalar(0.0, 0.0, 0.0), true, false);
+	auto pBlob = cv::dnn::blobFromImage(pImage, 0.01, m_fInputShape, cv::Scalar(104, 117, 123), true, false);
 	return(pBlob);
 }
-
+/*
 //　
 cv::Mat
-CYOLOv4::Execute(cv::Mat &  pBlob)
+CDenseNet::Execute(cv::Mat &  pBlob)
 {
 	std::vector<cv::String> 	pOutNames = m_pNetModel.getUnconnectedOutLayersNames();
 #ifdef		_DEBUG
@@ -70,10 +70,10 @@ CYOLOv4::Execute(cv::Mat &  pBlob)
 
 	return(cv::Mat());
 }
-
+*/
 //　
 bool
-CYOLOv4::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
+CDenseNet::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 {
 	// Network produces output blob with a shape NxC where N is a number of
 	// detected objects and C is a number of classes + 4 where the first 4

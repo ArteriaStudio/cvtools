@@ -116,7 +116,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 	pImageFilepaths.push_back("C:\\Users\\Rink\\OneDrive\\Pictures\\_a5807cd9-ee60-4366-b593-6db18aba2ef1.jpg");
 	pImageFilepaths.push_back("C:\\Users\\Rink\\OneDrive\\Pictures\\_4ac10f69-818b-4351-8127-38e540070a0b.jpg");
 
-	auto iImage = 4;
+	auto iImage = 0;
 	assert(iImage < pImageFilepaths.size());
 
 	auto pImage = cv::imread(pImageFilepaths[iImage]);

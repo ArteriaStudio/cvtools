@@ -51,3 +51,24 @@ CMobileNet::Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults)
 
 	return(true);
 }
+
+//　ダンプ
+bool
+CMobileNet::Dump(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults, std::vector<std::string> pNames)
+{
+	//　
+	auto nRows = pOut.size[2];
+	auto nCols = pOut.size[3];
+	cv::Mat 	pDetectionMat(nRows, nCols, CV_32F, pOut.ptr<float>());
+
+	for (int i = 0; i < pDetectionMat.rows; i++) {
+		int class_id = (int)pDetectionMat.at<float>(i, 1);
+		float fConfidence = pDetectionMat.at<float>(i, 2);
+
+		std::string		pText;
+		pText = std::format("{}:{}\n", pNames[class_id].c_str(), fConfidence);
+		::OutputDebugStringA(pText.c_str());
+	}
+
+	return(true);
+}

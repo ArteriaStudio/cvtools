@@ -12,6 +12,7 @@ public:
 	~CMobileNet()=0;
 
 	bool	Post(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults);
+	bool	Dump(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults, std::vector<std::string> pNames);
 };
 
 #endif	//	__MOBILENET_H__

@@ -12,11 +12,9 @@
 //　パラメータか使い方に誤りがあるのか、判定結果のスレッシュホールドに斑がある。（2024/03/24）
 CDenseNet::CDenseNet()
 {
-	//　フレームワークは、DarkNet
-	//　https://github.com/AlexeyAB/darknet
-	//　https://github.com/AlexeyAB/darknet/wiki/YOLOv4-model-zoo
-	//　DarkNet全般
-	//　https://github.com/AlexeyAB/darknet/wiki
+	//　フレームワークは、Caffe
+	//　https://github.com/shicai/DenseNet-Caffe
+	//　
 	//　実装サンプル（c++）
 	//　https://github.com/opencv/opencv/blob/8c25a8eb7b10fb50cda323ee6bec68aa1a9ce43c/samples/dnn/object_detection.cpp#L192-L221
 	m_pModelFilepath   = ::GetAssetFolder();

@@ -66,7 +66,12 @@ CMobileNet::Dump(cv::Mat &  pImage, cv::Mat &  pOut, VDnnInfences &  pResults, s
 		float fConfidence = pDetectionMat.at<float>(i, 2);
 
 		std::string		pText;
-		pText = std::format("{}:{}\n", pNames[class_id].c_str(), fConfidence);
+		if (class_id < pNames.size()) {
+			pText = std::format("{}:{}\n", pNames[class_id].c_str(), fConfidence);
+		}
+		else {
+			pText = std::format("{}:{}\n", "(Unknown)", fConfidence);
+		}
 		::OutputDebugStringA(pText.c_str());
 	}
 
